@@ -273,6 +273,7 @@ class _SetTimeScreenState extends State<SetTimeScreen> {
                       // silentTime: silentTime!,
                       // ringingTime: ringingTime!,
                       );
+                  cronjobServices.autoSwitchBetweenTime();
                   const snackBar = SnackBar(
                     content: Text('Auto silent and ringing acitvated'),
                   );

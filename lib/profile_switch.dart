@@ -49,7 +49,7 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
 
     setState(() {
       _permissionStatus =
-      permissionStatus! ? "Permissions Enabled" : "Permissions not granted";
+          permissionStatus! ? "Permissions Enabled" : "Permissions not granted";
     });
   }
 
@@ -64,7 +64,8 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text('Don\'t forget to add a permission line in AndroidManifest.xml'),
+              const Text(
+                  'Don\'t forget to add a permission line in AndroidManifest.xml'),
               // <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
               const SizedBox(height: 20.0),
               Text('Running on: $_soundMode'),
@@ -72,23 +73,23 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _getCurrentSoundMode(),
-                child: Text('Get current sound mode'),
+                child: const Text('Get current sound mode'),
               ),
               ElevatedButton(
                 onPressed: () => _setNormalMode(),
-                child: Text('Set Normal mode'),
+                child: const Text('Set Normal mode'),
               ),
               ElevatedButton(
                 onPressed: () => _setSilentMode(),
-                child: Text('Set Silent mode'),
+                child: const Text('Set Silent mode'),
               ),
               ElevatedButton(
                 onPressed: () => _setVibrateMode(),
-                child: Text('Set Vibrate mode'),
+                child: const Text('Set Vibrate mode'),
               ),
               ElevatedButton(
                 onPressed: () => _openDoNotDisturbSettings(),
-                child: Text('Open Do Not Access Settings'),
+                child: const Text('Open Do Not Access Settings'),
               ),
             ],
           ),
@@ -142,5 +143,3 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
     await PermissionHandler.openDoNotDisturbSetting();
   }
 }
-
-

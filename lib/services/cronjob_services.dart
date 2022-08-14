@@ -3,7 +3,46 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:switch_profile_modes/services/profile_mode_services.dart';
 
 class CronjobServices {
-  Future<void> activateAutoSwitching(
+  Future<void> autoSwitchBetweenTime() async {
+    final ProfileModeServices profileModeServices = ProfileModeServices();
+    final prefs = await SharedPreferences.getInstance();
+    final int? silentHour = prefs.getInt('silentHour');
+    final int? silentMins = prefs.getInt('silentMins');
+
+    final int? ringingHour = prefs.getInt('ringingHour');
+    final int? ringingMins = prefs.getInt('ringingMins');
+
+    if (silentMins != null &&
+        silentHour != null &&
+        ringingHour != null &&
+        ringingMins != null) {
+      DateTime now = DateTime.now();
+      DateTime silentTime =
+          DateTime(now.year, now.month, now.day, silentHour, silentMins);
+      DateTime ringingTime =
+          DateTime(now.year, now.month, now.day, ringingHour, ringingMins);
+
+      if (silentTime.isBefore(ringingTime)) {
+        if (now.isAfter(silentTime) && now.isBefore(ringingTime)) {
+          profileModeServices.setVibrateMode();
+        }
+        if (now.isAfter(ringingTime) || now.isBefore(silentTime)) {
+          profileModeServices.setNormalMode();
+        }
+      }
+
+      if (silentTime.isAfter(ringingTime)) {
+        if (now.isAfter(silentTime) || now.isBefore(ringingTime)) {
+          profileModeServices.setVibrateMode();
+        }
+        if (now.isAfter(ringingTime) && now.isBefore(silentTime)) {
+          profileModeServices.setNormalMode();
+        }
+      }
+    }
+  }
+
+  Future<void> autoSwitchingWorkmanger(
       // {required TimeOfDay silentTime, required TimeOfDay ringingTime}
       ) async {
     final ProfileModeServices profileModeServices = ProfileModeServices();
@@ -60,6 +99,28 @@ class CronjobServices {
       profileModeServices.setNormalMode();
       await prefs.setString('status', 'normal');
       status = 'normal';
+    });
+  }
+
+  Future<void> activateAutoSwitching() async {
+    final ProfileModeServices profileModeServices = ProfileModeServices();
+    final cron = Cron();
+
+    final prefs = await SharedPreferences.getInstance();
+    final int? silentHour = prefs.getInt('silentHour');
+    final int? silentMins = prefs.getInt('silentMins');
+
+    final int? ringingHour = prefs.getInt('ringingHour');
+    final int? ringingMins = prefs.getInt('ringingMins');
+
+    // To activate silent mode
+    cron.schedule(Schedule.parse('$silentMins $silentHour * * *'), () async {
+      profileModeServices.setVibrateMode();
+    });
+
+    //To activate ringing mode
+    cron.schedule(Schedule.parse('$ringingMins $ringingHour * * *'), () async {
+      profileModeServices.setNormalMode();
     });
   }
 }
